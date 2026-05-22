@@ -1,0 +1,2 @@
+"""PaperclipMaxxer Discord bot package."""
+

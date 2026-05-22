@@ -1,0 +1,23 @@
+[project]
+name = "paperclipmaxxer"
+version = "0.1.0"
+description = "A Discord LLM bot with recent-chat context, powered by OpenRouter."
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.9.0",
+    "discord.py>=2.4.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+paperclipmaxxer = "paperclipmaxxer.bot:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
