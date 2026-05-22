@@ -76,6 +76,8 @@ Logged in as PaperclipMaxxer#1234 (...)
 - Mentioned messages always route to the bot.
 - Unmentioned messages only get a response when the conversation with that user/channel is still
   active and the decision model says the message is a direct follow-up.
+- When a user replies to a Discord message, the replied-to message is included as explicit context
+  for the answer when the bot can access it.
 - Replying directly to the bot's previous Discord message is treated as an active follow-up.
 - The active conversation timeout defaults to 15 minutes. Change `CONVERSATION_TTL_SECONDS` in
   `.env` if you want it shorter or longer.

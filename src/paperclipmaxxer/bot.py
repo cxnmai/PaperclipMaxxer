@@ -139,6 +139,10 @@ class PaperclipMaxxer(discord.Client):
         messages: list[Message] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
         context_lines: list[str] = []
+        reply_context = await self._reply_context(message)
+        if reply_context:
+            context_lines.append(reply_context)
+
         should_fetch_history = include_history and likely_references_recent_chat(clean_prompt)
         if should_fetch_history:
             fetched = await self._fetch_recent_before(message)
@@ -165,6 +169,31 @@ class PaperclipMaxxer(discord.Client):
             }
         )
         return await self.openrouter.chat(messages)
+
+    async def _reply_context(self, message: discord.Message) -> str | None:
+        referenced = await self._referenced_message(message)
+        if not referenced:
+            return None
+        return "Message being replied to:\n" + format_discord_message(referenced, self.user.id if self.user else None)
+
+    async def _referenced_message(self, message: discord.Message) -> discord.Message | None:
+        reference = message.reference
+        if not reference or not reference.message_id:
+            return None
+        if isinstance(reference.resolved, discord.Message):
+            return reference.resolved
+        if reference.resolved is not None:
+            return None
+
+        channel = reference.cached_message.channel if reference.cached_message else message.channel
+        fetch_message = getattr(channel, "fetch_message", None)
+        if not fetch_message:
+            return None
+        try:
+            return await fetch_message(reference.message_id)
+        except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+            LOGGER.debug("Could not fetch replied-to message %s", reference.message_id, exc_info=True)
+            return None
 
     async def _fetch_recent_before(self, message: discord.Message) -> list[str]:
         lines: list[str] = []
