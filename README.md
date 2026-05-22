@@ -15,12 +15,6 @@ are truly addressed to it. Otherwise it stays silent.
   - only fetches Discord channel history before a mention when the prompt appears to reference prior chat;
   - includes recent stored bot/user conversation for follow-ups;
   - uses a decision prompt before replying to unmentioned active-thread messages.
-- Optional Cloudflare Worker health endpoint.
-
-Cloudflare Workers cannot run this Python Discord gateway bot because Discord gateway bots need a
-long-lived WebSocket process and this project is intentionally Python. The Worker in `worker/` is
-there for deployment visibility/health only. Run the Python bot on your machine, a VPS, or another
-long-running Python host.
 
 ## API key location
 
@@ -86,37 +80,10 @@ Logged in as PaperclipMaxxer#1234 (...)
 - The active conversation timeout defaults to 15 minutes. Change `CONVERSATION_TTL_SECONDS` in
   `.env` if you want it shorter or longer.
 
-## Optional Cloudflare Worker
-
-This does not host the Python bot. It gives you a tiny deployable endpoint for status checks.
-
-```bash
-cd worker
-npm install
-npx wrangler login
-npx wrangler deploy
-```
-
-After deploy, test:
-
-```bash
-curl https://paperclipmaxxer.<your-workers-subdomain>.workers.dev/health
-```
-
-Expected response:
-
-```json
-{
-  "ok": true,
-  "service": "PaperclipMaxxer",
-  "note": "The Python Discord gateway bot must be running separately."
-}
-```
-
 ## Production notes
 
 - Keep `.env` on the machine that runs the bot.
-- Use a process manager such as `systemd`, `pm2`, Docker, or your host's restart policy.
+- Use a process manager such as `systemd`, Docker, or your host's restart policy.
 - The SQLite database path defaults to `paperclipmaxxer.sqlite3`; set `DATABASE_PATH` if you want
   it somewhere else.
 - If OpenRouter changes the model ID, update `OPENROUTER_MODEL`.
